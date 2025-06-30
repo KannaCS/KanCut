@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KanCut - ARP Spoofer</title>
+    <script type="module" src="/src/main.ts" defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <!-- Disclaimer Modal -->
+    <div id="disclaimer-modal" class="modal active">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="fas fa-exclamation-triangle warning-icon"></i>
+          <h2>Educational Purpose Only</h2>
+        </div>
+        <div class="modal-body">
+          <p><strong>IMPORTANT DISCLAIMER:</strong></p>
+          <p>This tool is designed for <strong>educational purposes only</strong>. ARP spoofing can be used for legitimate network testing and security research, but it can also be misused for malicious purposes.</p>
+          <ul>
+            <li>Only use this tool on networks you own or have explicit permission to test</li>
+            <li>Unauthorized network interference may violate local laws and regulations</li>
+            <li>The developers are not responsible for any misuse of this software</li>
+            <li>Use responsibly and ethically</li>
+          </ul>
+          <p>By clicking "I Understand", you acknowledge that you will use this tool responsibly and in compliance with applicable laws.</p>
+        </div>
+        <div class="modal-footer">
+          <button id="accept-disclaimer" class="btn btn-primary">
+            <i class="fas fa-check"></i> I Understand
+          </button>
+          <button id="decline-disclaimer" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Exit
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app-container">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="header-content">
+          <div class="logo-section">
+            <i class="fas fa-network-wired logo-icon"></i>
+            <h1>KanCut</h1>
+            <span class="subtitle">ARP Spoofer Tool</span>
+          </div>
+          <div class="header-actions">
+            <button id="refresh-btn" class="btn btn-icon" title="Refresh">
+              <i class="fas fa-sync-alt"></i>
+            </button>
+            <button id="settings-btn" class="btn btn-icon" title="Settings">
+              <i class="fas fa-cog"></i>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Step 1: Interface Selection -->
+        <section class="step-section" id="interface-section">
+          <div class="step-header">
+            <div class="step-number">1</div>
+            <h2>Select Network Interface</h2>
+          </div>
+          <div class="interface-grid" id="interface-grid">
+            <div class="loading-spinner">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Loading network interfaces...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 2: Network Scanning -->
+        <section class="step-section" id="scan-section" style="display: none; opacity: 1; visibility: visible;">
+          <div class="step-header">
+            <div class="step-number">2</div>
+            <h2>Scan Network</h2>
+          </div>
+          <div class="scan-controls">
+            <div class="scan-info">
+              <p>Network will be automatically detected from the selected interface</p>
+            </div>
+            <button id="scan-btn" class="btn btn-primary">
+              <i class="fas fa-search"></i> Scan Network
+            </button>
+          </div>
+          <div class="devices-header" id="devices-header" style="display: none;">
+            <h3><i class="fas fa-network-wired"></i> Discovered Devices</h3>
+            <button id="spoof-all-btn" class="btn btn-danger">
+              <i class="fas fa-broadcast-tower"></i> Spoof All Devices
+            </button>
+          </div>
+          <div class="devices-grid" id="devices-grid">
+            <!-- Devices will be populated here -->
+          </div>
+        </section>
+
+        <!-- Step 3: ARP Spoofing -->
+        <section class="step-section" id="spoofing-section" style="display: none; opacity: 1; visibility: visible;">
+          <div class="step-header">
+            <div class="step-number">3</div>
+            <h2>ARP Spoofing</h2>
+          </div>
+          <div class="spoofing-controls">
+            <div class="target-selection">
+              <div class="input-group">
+                <label for="target-ip">Target IP</label>
+                <input type="text" id="target-ip" placeholder="192.168.1.100" readonly>
+              </div>
+              <div class="input-group">
+                <label for="gateway-ip">Gateway IP</label>
+                <input type="text" id="gateway-ip" placeholder="192.168.1.1">
+              </div>
+            </div>
+            <div class="spoofing-actions">
+              <button id="start-spoofing-btn" class="btn btn-success">
+                <i class="fas fa-play"></i> Start Spoofing
+              </button>
+              <button id="stop-spoofing-btn" class="btn btn-danger" style="display: none;">
+                <i class="fas fa-stop"></i> Stop Spoofing
+              </button>
+            </div>
+          </div>
+          
+          <!-- Active Sessions -->
+          <div class="sessions-container" id="sessions-container" style="display: none; opacity: 1; visibility: visible;">
+            <h3>Active Sessions</h3>
+            <div class="sessions-grid" id="sessions-grid">
+              <!-- Sessions will be populated here -->
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div class="status-item">
+          <i class="fas fa-circle status-indicator" id="status-indicator"></i>
+          <span id="status-text">Ready</span>
+        </div>
+        <div class="status-item">
+          <i class="fas fa-wifi"></i>
+          <span id="interface-name">No interface selected</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+      <div class="loading-content">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <p id="loading-text">Processing...</p>
+      </div>
+    </div>
+  </body>
+</html>
